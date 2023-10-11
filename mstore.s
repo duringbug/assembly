@@ -1,17 +1,23 @@
-    .section .data
+.section .data
 hello:  .string "Hello, World!"
 
-    .section .text
-    .globl _start
+.section .text
+.globl _start
+
+# print函数的定义
+print:
+    mov $1, %rax           # syscall number for sys_write
+    mov $1, %rdi           # file descriptor 1 (stdout)
+    mov $13, %rdx          # length of the string
+    syscall                # invoke syscall
+    ret                    # 返回到调用点
+
 _start:
-    # sys_write (ssize_t write(int fd, const void *buf, size_t count))
-    movl $4, %eax           # syscall number for sys_write
-    movl $1, %ebx           # file descriptor 1 (stdout)
-    leal hello, %ecx        # pointer to the string to print
-    movl $13, %edx          # length of the string
-    int $0x80               # interrupt to invoke syscall
+    # 调用print函数
+    lea hello(%rip), %rsi # pointer to the string to print
+    call print
 
     # sys_exit (void _exit(int status))
-    movl $1, %eax           # syscall number for sys_exit
-    xorl %ebx, %ebx         # status code 0
-    int $0x80               # interrupt to invoke syscall
+    mov $60, %rax           # syscall number for sys_exit
+    xor %rdi, %rdi          # status code 0
+    syscall                 # invoke syscall

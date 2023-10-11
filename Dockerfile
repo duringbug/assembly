@@ -1,9 +1,8 @@
 # 使用官方的Ubuntu 18.04作为基础镜像
-FROM i386/ubuntu:18.04
+FROM ustclug/ubuntu:18.04
 
-# 更新包管理器并安装GCC 7.5.0编译器和32位支持
-RUN dpkg --add-architecture i386 && \
-    apt-get update && \
+# 更新包管理器并安装GCC 7.5.0编译器和64位支持
+RUN apt-get update && \
     apt-get install -y gcc-7 g++-7 gcc-7-multilib g++-7-multilib make && \
     rm -rf /var/lib/apt/lists/* && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 100 && \
@@ -16,4 +15,4 @@ WORKDIR /app
 VOLUME /app
 
 # 指定容器启动时要执行的命令
-CMD ["sh", "-c", "as -o mstore.o mstore.s && ld -o mstore mstore.o && ./mstore"]
+CMD ["sh", "-c", "uname -m && as -o mstore.o mstore.s && ld -o mstore mstore.o && ./mstore"]
